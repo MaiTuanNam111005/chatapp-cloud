@@ -7,11 +7,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://your-frontend.onrender.com",
-    credentials: true
+    origin: process.env.CLIENT_URL,
+    credentials: true,
   }
 });
-
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }

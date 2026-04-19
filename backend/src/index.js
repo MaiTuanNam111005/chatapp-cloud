@@ -22,10 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-    "http://localhost:5173",
-    "https://your-frontend.onrender.com"
-  ],
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
