@@ -3,6 +3,12 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
+//chạy local
+// const BASE_URL = import.meta.env.MODE === "development" 
+//   ? `http://${window.location.hostname}:5001` 
+//   : "/";
+
+//deploy
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const useAuthStore = create((set, get) => ({
@@ -36,7 +42,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error.response.data.message);
     } finally {
       set({ isSigningUp: false });
     }
@@ -51,7 +57,7 @@ export const useAuthStore = create((set, get) => ({
 
       get().connectSocket();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error.response.data.message);
     } finally {
       set({ isLoggingIn: false });
     }
@@ -64,7 +70,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Logged out successfully");
       get().disconnectSocket();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error.response.data.message);
     }
   },
 
@@ -76,7 +82,7 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Profile updated successfully");
     } catch (error) {
       console.log("error in update profile:", error);
-      toast.error(error?.response?.data?.message || "Something went wrong");
+      toast.error(error.response.data.message);
     } finally {
       set({ isUpdatingProfile: false });
     }
@@ -86,7 +92,7 @@ export const useAuthStore = create((set, get) => ({
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
-    const socket = io(import.meta.env.VITE_API_URL, {
+    const socket = io(BASE_URL, {
       query: {
         userId: authUser._id,
       },
