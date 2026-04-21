@@ -14,9 +14,10 @@ const Sidebar = () => {
     getUsers();
   }, [getUsers]);
 
+  // Sửa lỗi tại đây: Đảm bảo users luôn là mảng trước khi filter
   const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+    ? (users || []).filter((user) => onlineUsers.includes(user._id))
+    : (users || []);
 
   if (isUsersLoading) return <SidebarSkeleton />;
 
@@ -27,7 +28,7 @@ const Sidebar = () => {
           <Users className="size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
-        {/* TODO: Online filter toggle */}
+
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -38,12 +39,13 @@ const Sidebar = () => {
             />
             <span className="text-sm">Show online only</span>
           </label>
-          <span className="text-xs text-zinc-500">({onlineUsers.length - 1} online)</span>
+          <span className="text-xs text-zinc-500">({Math.max(0, onlineUsers.length - 1)} online)</span>
         </div>
       </div>
 
       <div className="overflow-y-auto w-full py-3">
-        {filteredUsers.map((user) => (
+        {/* Sử dụng optional chaining ?.map để cực kỳ an toàn */}
+        {filteredUsers?.map((user) => (
           <button
             key={user._id}
             onClick={() => setSelectedUser(user)}
@@ -77,11 +79,12 @@ const Sidebar = () => {
           </button>
         ))}
 
-        {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+        {filteredUsers?.length === 0 && (
+          <div className="text-center text-zinc-500 py-4">No users found</div>
         )}
       </div>
     </aside>
   );
 };
+
 export default Sidebar;
